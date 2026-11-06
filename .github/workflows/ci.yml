@@ -1,0 +1,59 @@
+name: Flock CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  phase1:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Flock
+        uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake git python3
+
+      - name: Build pinned Goose compiler
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/aardappel/goose.git /tmp/goose
+          git -C /tmp/goose fetch origin 75ad5bd3451de4d585238760c0943d339e85d1c4 --depth=1
+          git -C /tmp/goose checkout --detach 75ad5bd3451de4d585238760c0943d339e85d1c4
+          test "$(git -C /tmp/goose rev-parse HEAD)" = "75ad5bd3451de4d585238760c0943d339e85d1c4"
+          cmake -S /tmp/goose -B /tmp/goose/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build /tmp/goose/build --config Release -j2
+          /tmp/goose/build/goose version
+
+      - name: Reference conformance
+        run: |
+          python3 -m py_compile tools/reference_model.py tools/reference_model_alt.py tools/conformance.py tools/phase1_expected.py tests/phase1_compare.py
+          python3 tools/conformance.py
+          python3 tools/phase1_expected.py
+
+      - name: Goose format and typecheck
+        run: |
+          /tmp/goose/build/goose format --check src/flock_phase1.goose
+          /tmp/goose/build/goose check src/flock_phase1.goose
+
+      - name: Goose JIT conformance
+        run: |
+          rm -f dist/goose_tx.bin dist/goose_state.bin dist/goose_invalid_state.bin
+          /tmp/goose/build/goose src/flock_phase1.goose
+          python3 tests/phase1_compare.py
+
+      - name: Goose native conformance
+        run: |
+          /tmp/goose/build/goose build src/flock_phase1.goose
+          rm -f dist/goose_tx.bin dist/goose_state.bin dist/goose_invalid_state.bin
+          ./src/flock_phase1
+          python3 tests/phase1_compare.py
+          cmp dist/python_tx.bin dist/goose_tx.bin
+          cmp dist/python_state.bin dist/goose_state.bin
+          cmp dist/python_invalid_state.bin dist/goose_invalid_state.bin

@@ -4,3 +4,6 @@ build/
 dist/
 .flock/
 .env
+.toolchains/
+src/flock_phase1
+src/flock_phase1.exe
