@@ -53,6 +53,11 @@ jobs:
           python3 -m py_compile tools/authenticated_state.py tools/authenticated_state_alt.py tests/phase2_authenticated_state.py
           python3 tests/phase2_authenticated_state.py dist/goose_state.bin
 
+      - name: Phase 3 block commitments
+        run: |
+          python3 -m py_compile tools/block_commitment.py tools/block_commitment_alt.py tests/phase3_block_commitment.py
+          python3 tests/phase3_block_commitment.py dist/goose_tx.bin dist/goose_state.bin
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
