@@ -48,6 +48,11 @@ jobs:
           /tmp/goose/build/goose src/flock_phase1.goose
           python3 tests/phase1_compare.py
 
+      - name: Phase 2 authenticated state
+        run: |
+          python3 -m py_compile tools/authenticated_state.py tools/authenticated_state_alt.py tests/phase2_authenticated_state.py
+          python3 tests/phase2_authenticated_state.py dist/goose_state.bin
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
