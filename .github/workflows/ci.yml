@@ -68,6 +68,11 @@ jobs:
           python3 -m py_compile tools/block_producer.py tests/phase5_block_production.py
           PYTHONPATH=. python3 tests/phase5_block_production.py
 
+      - name: Phase 6 bounded transport and handshake
+        run: |
+          python3 -m py_compile tools/transport.py tests/phase6_transport_handshake.py
+          PYTHONPATH=. python3 tests/phase6_transport_handshake.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
