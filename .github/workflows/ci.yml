@@ -63,6 +63,11 @@ jobs:
           python3 -m py_compile tools/chain_store.py tools/flock_tool.py tests/phase4_persistence_tooling.py
           PYTHONPATH=. python3 tests/phase4_persistence_tooling.py
 
+      - name: Phase 5 deterministic block production
+        run: |
+          python3 -m py_compile tools/block_producer.py tests/phase5_block_production.py
+          PYTHONPATH=. python3 tests/phase5_block_production.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
