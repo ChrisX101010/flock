@@ -103,6 +103,11 @@ jobs:
           python3 -m py_compile tools/contract_runtime.py tests/phase12_contract_runtime.py
           PYTHONPATH=. python3 tests/phase12_contract_runtime.py
 
+      - name: Phase 13 unified authenticated execution pipeline
+        run: |
+          python3 -m py_compile tools/execution_pipeline.py tests/phase13_execution_pipeline.py
+          PYTHONPATH=. python3 tests/phase13_execution_pipeline.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
