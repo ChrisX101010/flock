@@ -19,7 +19,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake git python3
+          sudo apt-get install -y build-essential cmake git python3 python3-cryptography
 
       - name: Build pinned Goose compiler
         run: |
@@ -82,6 +82,11 @@ jobs:
         run: |
           python3 -m py_compile tools/reference_model.py tools/mempool.py tests/phase8_mempool_transport.py
           PYTHONPATH=. python3 tests/phase8_mempool_transport.py
+
+      - name: Phase 9 authenticated transaction admission
+        run: |
+          python3 -m py_compile tools/authenticated_mempool.py tests/phase9_authenticated_mempool.py
+          PYTHONPATH=. python3 tests/phase9_authenticated_mempool.py
 
       - name: Goose native conformance
         run: |
