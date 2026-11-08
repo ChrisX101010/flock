@@ -93,6 +93,11 @@ jobs:
           python3 -m py_compile tools/flock_vm.py tests/phase10_flockvm.py
           PYTHONPATH=. python3 tests/phase10_flockvm.py
 
+      - name: Phase 11 versioned atomic contract state
+        run: |
+          python3 -m py_compile tools/flock_vm_state.py tools/contract_state.py tests/phase11_contract_state.py
+          PYTHONPATH=. python3 tests/phase11_contract_state.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
