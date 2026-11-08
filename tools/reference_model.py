@@ -8,6 +8,7 @@ STATE_DOMAIN = b"FLOCKSTATE1"
 MAX_PAYLOAD = 4096
 U32_MAX = (1 << 32) - 1
 U64_MAX = (1 << 64) - 1
+TX_FIXED_LEN = len(TX_DOMAIN) + 4 + 8 + 32 + 32 + (4 * 8) + 4
 
 @dataclass(frozen=True)
 class Tx:
@@ -50,6 +51,55 @@ def encode_tx(tx: Tx) -> bytes:
         struct.pack(">I", len(tx.payload)),
         tx.payload,
     ))
+
+def decode_tx(raw: bytes) -> Tx:
+    fixed = TX_FIXED_LEN
+    if len(raw) < fixed:
+        raise ValueError("truncated transaction")
+    if not raw.startswith(TX_DOMAIN):
+        raise ValueError("wrong transaction domain")
+
+    at = len(TX_DOMAIN)
+    chain_id = struct.unpack_from(">I", raw, at)[0]
+    at += 4
+    nonce = struct.unpack_from(">Q", raw, at)[0]
+    at += 8
+    sender = raw[at:at + 32]
+    at += 32
+    recipient = raw[at:at + 32]
+    at += 32
+    amount = struct.unpack_from(">Q", raw, at)[0]
+    at += 8
+    compute_limit = struct.unpack_from(">Q", raw, at)[0]
+    at += 8
+    state_limit = struct.unpack_from(">Q", raw, at)[0]
+    at += 8
+    memory_limit = struct.unpack_from(">Q", raw, at)[0]
+    at += 8
+    payload_len = struct.unpack_from(">I", raw, at)[0]
+    at += 4
+
+    if payload_len > MAX_PAYLOAD:
+        raise ValueError("payload too large")
+    if len(raw) != at + payload_len:
+        raise ValueError("wrong transaction payload length")
+
+    tx = Tx(
+        chain_id=chain_id,
+        nonce=nonce,
+        sender=sender,
+        recipient=recipient,
+        amount=amount,
+        compute_limit=compute_limit,
+        state_limit=state_limit,
+        memory_limit=memory_limit,
+        payload=raw[at:],
+    )
+
+    if encode_tx(tx) != raw:
+        raise ValueError("non-canonical transaction encoding")
+    return tx
+
 
 def apply_tx(state: dict[bytes, tuple[int, int]], tx: Tx):
     nxt = dict(state)

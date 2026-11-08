@@ -78,6 +78,11 @@ jobs:
           python3 -m py_compile tools/block_sync.py tests/phase7_block_sync.py
           PYTHONPATH=. python3 tests/phase7_block_sync.py
 
+      - name: Phase 8 bounded mempool transport and admission
+        run: |
+          python3 -m py_compile tools/reference_model.py tools/mempool.py tests/phase8_mempool_transport.py
+          PYTHONPATH=. python3 tests/phase8_mempool_transport.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
