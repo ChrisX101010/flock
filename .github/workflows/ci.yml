@@ -73,6 +73,11 @@ jobs:
           python3 -m py_compile tools/transport.py tests/phase6_transport_handshake.py
           PYTHONPATH=. python3 tests/phase6_transport_handshake.py
 
+      - name: Phase 7 bounded sequential block synchronization
+        run: |
+          python3 -m py_compile tools/block_sync.py tests/phase7_block_sync.py
+          PYTHONPATH=. python3 tests/phase7_block_sync.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
