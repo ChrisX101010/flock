@@ -98,6 +98,11 @@ jobs:
           python3 -m py_compile tools/flock_vm_state.py tools/contract_state.py tests/phase11_contract_state.py
           PYTHONPATH=. python3 tests/phase11_contract_state.py
 
+      - name: Phase 12 deterministic contract deployment and calls
+        run: |
+          python3 -m py_compile tools/contract_runtime.py tests/phase12_contract_runtime.py
+          PYTHONPATH=. python3 tests/phase12_contract_runtime.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
