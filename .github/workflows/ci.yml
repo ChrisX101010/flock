@@ -113,6 +113,11 @@ jobs:
           python3 -m py_compile tools/execution_store.py tests/phase14_execution_store.py
           PYTHONPATH=. python3 tests/phase14_execution_store.py
 
+      - name: Phase 15 authenticated on-chain contract deployment
+        run: |
+          python3 -m py_compile tools/deployment_actions.py tests/phase15_deployment_actions.py
+          PYTHONPATH=. python3 tests/phase15_deployment_actions.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
