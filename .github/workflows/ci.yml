@@ -123,6 +123,11 @@ jobs:
           python3 -m py_compile tools/action_store.py tests/phase16_action_store.py
           PYTHONPATH=. python3 tests/phase16_action_store.py
 
+      - name: Phase 17 deterministic BFT finality core
+        run: |
+          python3 -m py_compile tools/consensus.py tests/phase17_consensus_finality.py
+          PYTHONPATH=. python3 tests/phase17_consensus_finality.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
