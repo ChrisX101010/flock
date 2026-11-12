@@ -133,6 +133,11 @@ jobs:
           python3 -m py_compile tools/consensus_wire.py tools/devnet.py tests/phase18_multiprocess_devnet.py
           PYTHONPATH=. python3 tests/phase18_multiprocess_devnet.py
 
+      - name: Phase 19 peer-to-peer consensus and pacemaker
+        run: |
+          python3 -m py_compile tools/p2p_consensus.py tests/phase19_p2p_consensus.py
+          PYTHONPATH=. python3 tests/phase19_p2p_consensus.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
