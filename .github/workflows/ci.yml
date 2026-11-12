@@ -128,6 +128,11 @@ jobs:
           python3 -m py_compile tools/consensus.py tests/phase17_consensus_finality.py
           PYTHONPATH=. python3 tests/phase17_consensus_finality.py
 
+      - name: Phase 18 multi-process devnet gate
+        run: |
+          python3 -m py_compile tools/consensus_wire.py tools/devnet.py tests/phase18_multiprocess_devnet.py
+          PYTHONPATH=. python3 tests/phase18_multiprocess_devnet.py
+
       - name: Goose native conformance
         run: |
           /tmp/goose/build/goose build src/flock_phase1.goose
