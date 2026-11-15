@@ -1,0 +1,35 @@
+name: Regression watchdog
+
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/regression-*.yml'
+      - '.github/watchdog-*.cjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watchdog-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  attempt_1:
+    name: Attempt 1
+    uses: ./.github/workflows/ci.yml
+    with:
+      watchdog: true
+      watchdog_attempt: '1'
+
+  attempt_2:
+    name: Attempt 2
+    needs: attempt_1
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/ci.yml
+    with:
+      watchdog: true
+      watchdog_attempt: '2'
