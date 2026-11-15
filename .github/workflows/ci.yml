@@ -1,6 +1,16 @@
 name: Flock CI
 
 on:
+  workflow_call:
+    inputs:
+      watchdog:
+        description: Run the bounded regression-watchdog profile
+        type: boolean
+        default: false
+      watchdog_attempt:
+        description: Distinguish independent watchdog invocations
+        type: string
+        default: baseline
   push:
     branches: [master]
   pull_request:
@@ -10,6 +20,7 @@ permissions:
 
 jobs:
   phase1:
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
 
     steps:
@@ -147,3 +158,14 @@ jobs:
           cmp dist/python_tx.bin dist/goose_tx.bin
           cmp dist/python_state.bin dist/goose_state.bin
           cmp dist/python_invalid_state.bin dist/goose_invalid_state.bin
+
+  watchdog_policy:
+    name: Watchdog policy tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Test reporting policy without credentials
+        run: node --test .github/watchdog-policy.test.cjs .github/watchdog-workflow.test.cjs
